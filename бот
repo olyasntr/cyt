@@ -1,0 +1,36 @@
+import telebot
+from telebot import types
+from config import token
+
+bot = telebot.TeleBot(token)
+
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    welcome_text = (
+        "Здравствуйте! Спасибо, что выбрали нашу клинику \"Жемчужина\".\n"
+        "Бот поможет ответить на ваши вопросы"
+    )
+    bot.send_message(message.chat.id, welcome_text, reply_markup=main_menu())
+
+def main_menu():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    btn1 = types.KeyboardButton("Наш адрес")
+    btn2 = types.KeyboardButton("Контакты")
+    btn3 = types.KeyboardButton("Записаться на бесплатную консультацию")
+    markup.add(btn1, btn2, btn3)
+    return markup
+
+@bot.message_handler(func=lambda message: message.text == "Наш адрес")
+def address(message):
+    bot.send_message(message.chat.id, "г. Бердск, ул.Некрасова, 22, напротив детской больницы")
+
+@bot.message_handler(func=lambda message: message.text == "Контакты")
+def contacts(message):
+    bot.send_message(message.chat.id, "+7-913-909-58-20")
+
+@bot.message_handler(func=lambda message: message.text == "Записаться на бесплатную консультацию")
+def consultation(message):
+    bot.send_message(message.chat.id, "Напишите, пожалуйста, ваш номер телефона и мы свяжемся с вами в ближайшее время")
+
+if __name__ == "__main__":
+    bot.polling(none_stop=True)
